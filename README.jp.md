@@ -1,7 +1,7 @@
 # Clipper GUI (v0.1 beta)
 
-Thank you for downloading this tool!  
-This tool allows you to download YouTube videos and archive their comments.
+このソフトをダウンロードしていただきありがとうございます。
+このツールはYouTube上の動画をダウンロードしたりライブ配信のアーカイブからコメントを取得できます。
 
 ## Requirements
 To run this tool, the following software is required:
@@ -12,15 +12,15 @@ To run this tool, the following software is required:
 > [!IMPORTANT]
 > If you are running the **Python source code (.py)**, please make sure to place `ffmpeg.exe` and `ffprobe.exe` in the same folder as the script.
 
-## System Requirements
+## システム要件
 * **OS**: Windows 10 / 11
-* **Language**: Japanese (日本語)
+* **言語**: 日本語
 
-## latest Version
+## 最新バージョン
 * **0.1 beta**
 
-## Contact
-If you have any questions or feedback, please contact me via DM on X (Twitter):  
+## 連絡
+質問やフィードバックはTwitterのDMへ:  
 [@Elnabu1022](https://twitter.com/Elnabu1022)
 
 for all Content creator.
