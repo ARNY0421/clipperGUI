@@ -1,4 +1,4 @@
-#clipperGUI
+# clipperGUI
 # YouTube Video & Comment Downloader (v0.1 beta)
 
 Thank you for downloading this tool!  
