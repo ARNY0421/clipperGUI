@@ -16,7 +16,7 @@ To run this tool, the following software is required:
 * **OS**: Windows 10 / 11
 * **Language**: Japanese (日本語)
 
-## Version
+## latest Version
 * **0.1 beta**
 
 ## Contact
