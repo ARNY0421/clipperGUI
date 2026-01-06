@@ -1,5 +1,4 @@
-# clipperGUI
-# YouTube Video & Comment Downloader (v0.1 beta)
+# Clipper GUI (v0.1 beta)
 
 Thank you for downloading this tool!  
 This tool allows you to download YouTube videos and archive their comments.
