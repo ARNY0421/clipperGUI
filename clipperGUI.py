@@ -171,12 +171,45 @@ def convert(json_file_path, base_title):
     print(f"エラー: ファイルの書き込みに失敗しました: {e}")
     return 0
 
+# 後片付け処理（一時ファイルの削除）を行う関数
+def cleanup_temp_files(video_id):
+    if not video_id:
+        print("後片付け処理: 動画IDが特定できなかったため、一時ファイルの削除はスキップされました。")
+        return
+
+    # 動画IDを含む全てのファイルを検索 (例: *3qNu0OjZ1pA_*)
+    search_pattern = f"*{video_id}*"
+    files_to_delete = glob.glob(search_pattern)
+          
+    if files_to_delete:
+      print(f"\n 一時ファイルの後片付け中...")
+          
+    for file_path in files_to_delete:
+        # 絶対に削除してはいけないファイルを除外
+        # 1. ユーザーの出力ファイル（_chatdata.txt）
+        # 2. 動画本体（.mp4）
+        # 3. 実行ファイル本体やスクリプト (.exe, .py, .spec)
+        if file_path.endswith(('_chatdata.txt', '.mp4', '.exe', '.py', '.spec')):
+          continue
+        
+        # 削除対象の拡張子 (JSON, 一時ファイルなど)
+        if file_path.endswith(('.json', '.part', '.ytdl')):
+          if os.path.exists(file_path):
+            try:
+              os.remove(file_path)
+              # print(f"（削除: {file_path}）") # デバッグ用
+            except Exception as e:
+              print(f"警告: ファイル '{file_path}' の削除に失敗しました: {e}")
+          
+    print("後片付け完了。")
+
 #ダウンロード-コメント
 def get_comment(URL) :
   ydl_opts = {
     'skip_download': True,
     'outtmpl': {'default': '%(id)s_.mp4'}, # 投稿日_タイトル_動画ID.mp4   %(upload_date)s_%(title)s_
-    'format': 'best',
+    'format': 'bestvideo+bestaudio/best',
+    'merge_output_format': 'mp4',
     'writesubtitles': True, #字幕の書き込み
     'progress_hooks': [progress_hook], #これ追加
     'ffmpeg_location': resource_path('ffmpeg.exe'), #ffmpegの場所を入れる
@@ -240,40 +273,33 @@ def get_comment(URL) :
   finally:
     #ボタンを有効化
     action_button.config(state=tk.NORMAL)
-    # 後片付け処理: 動画IDに関連する全ての一時ファイルを削除（最重要）
-    if video_id:
-      # 動画IDで始まる全てのファイルを検索 (例: 3qNu0OjZ1pA_*)
-      # globを使用してワイルドカード検索を行います
-      search_pattern = f"{video_id}_*"
-      files_to_delete = glob.glob(search_pattern)
-            
-      if files_to_delete:
-        print(f"\n 一時ファイルの後片付け中...")
-            
-      for file_path in files_to_delete:
-          # ユーザーの出力ファイル（3qNu0OjZ1pA_chatdata.txt）を誤って削除しないように除外
-          if not file_path.endswith('_chatdata.txt'):
-            if os.path.exists(file_path):
-              try:
-                os.remove(file_path)
-                # print(f"（削除: {file_path}）") # デバッグ用
-              except Exception as e:
-                print(f"警告: ファイル '{file_path}' の削除に失敗しました: {e}")
-            
-      print("後片付け完了。")
-    else:
-      print(  "後片付け処理: 動画IDが特定できなかったため、一時ファイルの削除はスキップされました。")
+    # 後片付け処理
+    cleanup_temp_files(video_id)
+
 #ダウンロード　動画
 def gen_video(URL) :
   ydl_opts = {
     'outtmpl': {'default': '%(upload_date)s_%(title)s_%(id)s_.mp4'}, # 投稿日_タイトル_動画ID.mp4   %(upload_date)s_%(title)s_
-    'format': 'best',
+    'format': 'bestvideo+bestaudio/best',
+    'merge_output_format': 'mp4',
     'writesubtitles': True, #字幕の書き込み
     'progress_hooks': [progress_hook], #これ追加
     'ffmpeg_location': resource_path('ffmpeg.exe'), #ffmpegの場所を入れる
+    # HLS/DASHのダウンロードにffmpegを使用（断片化エラー対策）
+    'downloader': {
+        'm3u8': 'ffmpeg',
+        'http_dash_segments': 'ffmpeg', 
+    },
   }
-  with YoutubeDL(ydl_opts) as ydl:
-    ydl.download([URL])
+  video_id = None
+  try:
+    with YoutubeDL(ydl_opts) as ydl:
+      info_dict = ydl.extract_info(URL, download=True)
+      video_id = info_dict.get('id')
+  except Exception as e:
+    print(f"\n 動画ダウンロード中にエラーが発生しました: {e}")
+  finally:
+    cleanup_temp_files(video_id)
 
 #入力欄追加
 URLBox = tkinter.Entry(width=50)
