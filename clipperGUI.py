@@ -10,7 +10,7 @@ from threading import Thread # スレッドをインポート
 
 
 root = tkinter.Tk()
-root.title(u"clips downloder")
+root.title(u"clipperGUI")
 root.geometry("400x350")
 #1=動画のみ 2=コメントのみ 3=両方
 progress_text = tk.StringVar(value="URLを入力して実行してください")
